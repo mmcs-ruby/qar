@@ -1,24 +1,25 @@
 #include <stdio.h>
+#include <omp.h>
 
 void kronecker(int **a, int **b, int **c, size_t m1, size_t n1, size_t m2, size_t n2)
 {
-    size_t x = 0;
-    for (size_t i = 0; i < m1; i++)
+    #pragma omp parallel for
+    for(size_t j1 = 0; j1 < m1; ++j1)
     {
-        size_t y = 0;
-        for (size_t j = 0; j < n1; j++)
+        size_t _y = j1 * m1;
+        for(size_t i1 = 0; i1 < n1; ++i1)
         {
-            for (size_t p = 0; p < m2; p++)
+            size_t _x = i1 * n1;
+            for(size_t j2 = 0; j2 < m2; ++j2)
             {
-                for (size_t q = 0; q < n2; q++)
+                for(size_t i2 = 0; i2 < n2; ++i2)
                 {
-                    c[i + p + x][j + q + y] = b[p][q] * a[i][j];
+                    c[_y + j2][_x + i2] = a[j1][i1] * b[j2][i2];
                 }
             }
-            y += n2 - 1;
         }
-        x += m2 - 1;
     }
+
 }
 
 void printm(int **a, size_t m, size_t n)
@@ -27,42 +28,51 @@ void printm(int **a, size_t m, size_t n)
     {
         for (size_t j = 0; j < n; j++)
         {
-            printf("%d ", a[i][j]);
+            printf("%d\t", a[i][j]);
         }
         printf("\n");
     }
 }
 
+int** malloc_matrix(size_t h, size_t w)
+{
+    int **a = (int **)malloc(h * sizeof(int *));
+    for (int i = 0; i < h; i++)
+    {
+        a[i] = (int *)malloc(w * sizeof(int));
+    }
+    return a;
+}
+
+void rand_matrix(int** a, size_t h, size_t w)
+{
+    time_t t;
+    srand((unsigned) time(&t));
+    for(size_t j = 0; j < h; ++j)
+    {
+        for(size_t i = 0; i < w; ++i)
+        {
+            a[j][i] = rand() % 20 - 10;
+        }
+    }
+}
+
 int main()
 {
-    int **a = (int **)malloc(2 * sizeof(int *));
-    for (int i = 0; i < 2; i++)
-    {
-        a[i] = (int *)malloc(2 * sizeof(int));
-    }
 
-    a[0][0] = 1;
-    a[0][1] = 2;
-    a[1][0] = 3;
-    a[1][1] = 4;
+    size_t h_a = 100, w_a = 100;
+    int **a = malloc_matrix(h_a, w_a);
+    rand_matrix(a, h_a, w_a);
+    // printm(a, h_a, w_a);
 
-    int **b = (int **)malloc(2 * sizeof(int *));
-    for (int i = 0; i < 2; i++)
-    {
-        b[i] = (int *)malloc(2 * sizeof(int));
-    }
 
-    b[0][0] = 0;
-    b[0][1] = 5;
-    b[1][0] = 6;
-    b[1][1] = 7;
+    size_t h_b = 100, w_b = 100;
+    int **b = malloc_matrix(h_b, w_b);
+    rand_matrix(b, h_b, w_b);
+    //printm(b, h_b, w_b);
 
-    int **c = (int **)malloc(4 * sizeof(int *));
-    for (int i = 0; i < 4; i++)
-    {
-        c[i] = (int *)malloc(4 * sizeof(int));
-    }
-
-    kronecker(a, b, c, 2, 2, 2, 2);
-    printm(c, 4, 4);
+    size_t h_c = h_a * h_b, w_c = w_a * w_b;
+    int **c = malloc_matrix(h_c, w_c);
+    kronecker(a, b, c, h_a, w_a, h_b, w_b);
+    //printm(c, h_c, h_c);*/
 }
