@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description   = "Quantum computer simulator written in Ruby using efficient C extensions for greater performance."
   spec.homepage      = "https://github.com/mmcs-ruby/qar"
   spec.license       = "MIT"
-  spec.required_ruby_version = "~> 3.1.0"
+  spec.required_ruby_version = "~> 3.0.2"
 
   spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
 
