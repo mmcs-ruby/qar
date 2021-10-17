@@ -1,6 +1,6 @@
 require "matrix"
 require_relative "vector_helper"
-require_relative "qar/extensions/qar/extensions"
+require_relative "qar/extensions/extensions"
 
 ZERO_PROB = "|0>".freeze
 ONE_PROB = "|1>".freeze
@@ -8,7 +8,7 @@ ONE_PROB = "|1>".freeze
 # Qubit class is quantum bit abstraction. It contains 2 - dimensional vector
 # which represents probability of 0 and 1
 # Qubit can be measured or multiplicative
-class Qubit
+class Qbit
   attr_reader :vector
   attr_accessor :entanglement
 
