@@ -15,7 +15,7 @@ class Qubit
   include VectorHelper
 
   # Initialization by two probability of zero and one
-  # Probabilities should be normalized: |a| + |b| = 1
+  # Probabilities should be normalized: |a|^2 + |b|^2 = 1
   def initialize(zero_prob, one_prob)
     self.vector = [zero_prob, one_prob]
   end

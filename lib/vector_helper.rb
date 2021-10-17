@@ -9,7 +9,7 @@ module VectorHelper
   include QuantumException
 
   ACCURACY = 10
-  # Check if current vector is normalized: |x1| + |x2| + ... |xn| = 1
+  # Check if current vector is normalized: |x1|^2 + |x2|^2 + ... |xn|^2 = 1
   # with current accuracy
   def normalized?
     @vector.inject(0) { |sum, el| sum + el.abs2 }.round(ACCURACY) == 1
