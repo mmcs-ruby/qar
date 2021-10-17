@@ -56,13 +56,13 @@ class Qbit
     end
   end
 
-  # Returns zero's probability
-  def zero_probability
+  # Returns zero element
+  def zero_el
     @vector[0, 0].round(ACCURACY)
   end
 
-  # Returns one's probability
-  def one_probability
+  # Returns one element
+  def one_el
     @vector[1, 0].round(ACCURACY)
   end
 
@@ -72,10 +72,9 @@ class Qbit
   end
 
   def to_s
-    return if entangled?
 
-    zero = zero_probability
-    one = one_probability
+    zero = zero_el
+    one = one_el
 
     str = ""
 
