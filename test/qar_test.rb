@@ -16,6 +16,8 @@ class QarTest < Minitest::Test
     assert_nothing_raised do
       require "qar"
     end
+  end
+
   def test_qubit_constructor
     q = Qubit.new(1, 0)
 

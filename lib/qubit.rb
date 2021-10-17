@@ -1,6 +1,6 @@
 require "matrix"
 require_relative "vector_helper"
-require_relative "extensions/extensions"
+require_relative "qar/extensions/qar/extensions"
 
 ZERO_PROB = "|0>".freeze
 ONE_PROB = "|1>".freeze

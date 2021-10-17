@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "quantum_exception"
-require_relative "extensions/extensions"
+require_relative "qar/extensions/qar/extensions"
 
 # Contains help methods for classes which use operations above vectors
 # such as Qubit class
