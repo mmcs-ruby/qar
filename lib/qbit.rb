@@ -20,6 +20,24 @@ class Qbit
     self.vector = [zero_prob, one_prob]
   end
 
+  def self.generate
+    r = rand(0.0...1.0)
+
+    zero_prob = Math.sqrt(r)
+    one_prob = 1 - Math.sqrt(r)
+
+    r2 = rand(0.0...zero_prob)
+    zero_real_prob = Math.sqrt(r2)
+    zero_img_prob = Math.sqrt(zero_prob - r2)
+
+    r3 = rand(0.0...one_prob)
+    one_real_prob = Math.sqrt(r3)
+    one_img_prob = Math.sqrt(one_prob - r3)
+
+    Qbit.new(Complex(zero_real_prob,zero_img_prob), \
+             Complex(one_real_prob, one_img_prob))
+  end
+
   def vector=(vector)
     @vector = Matrix.column_vector(vector)
     raise NormalizationException unless normalized?

@@ -76,4 +76,11 @@ class QarTest < Minitest::Test
 
     assert q.to_s == "1/2+1/2i|0> + 0.0+0.7071067812i|1>"
   end
+
+  def test_qbit_generator
+    srand(Time.now.to_i)
+    assert_nothing_raised do
+      q = Qbit.generate
+    end
+  end
 end
