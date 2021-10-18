@@ -85,3 +85,5 @@ class Qbit
     str
   end
 end
+
+Qubit = Qbit

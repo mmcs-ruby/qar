@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 require_relative "qar/version"
-require_relative "qbit"
+require "qbit"
+require "entanglement"
 require_relative "quantum_exception"
 
 module Qar
