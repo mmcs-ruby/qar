@@ -68,7 +68,7 @@ class Qbit
 
   # Returns true if entangled with another bit
   def entangled?
-    @entanglement
+    !@entanglement.nil?
   end
 
   def to_s

@@ -4,16 +4,30 @@ require "vector_helper"
 class Entanglement
   attr_accessor :qubits
 
+  include QuantumException
+
   def initialize(*qubits)
     @qubits = qubits
     @size = @qubits.size
     # number of variants
     @nov = 2**@size
+
+    @qubits.each do |q|
+      if q.entanglement.nil?
+        q.entanglement = [self]
+      elsif q.entanglement.include? self
+        raise ReEntanglementException
+      else
+        q.entanglement << self
+      end
+    end
+
     self
   end
 
   def measure
     r = rand + 1e-10
+
     # a kind of a weak tensor product
     generally_probability = 0
     (0...@nov).each do |i|

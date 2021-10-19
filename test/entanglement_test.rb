@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "test_helper"
 
 class EntanglementTest < Minitest::Test
@@ -5,6 +7,21 @@ class EntanglementTest < Minitest::Test
   def test_entanglement_constructor
     assert_nothing_raised Exception do
       Entanglement.new(Qubit.generate, Qubit.generate, Qubit.generate)
+    end
+  end
+
+  def test_entangled_qubit_initializing_without_the_exception
+    q1 = Qubit.generate
+    Entanglement.new(q1)
+    assert_nothing_raised ReEntanglementException do
+      Entanglement.new(q1)
+    end
+  end
+
+  def test_entangled_qubit_initializing_with_the_exception
+    q1 = Qubit.generate
+    assert_raises ReEntanglementException do
+      Entanglement.new(q1, q1)
     end
   end
 
@@ -43,7 +60,5 @@ class EntanglementTest < Minitest::Test
   def test_something_is_connected_with_Bell_states
     # ...
   end
-
-
 
 end
