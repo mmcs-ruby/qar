@@ -75,6 +75,10 @@ class Qbit
     !@entanglement.nil?
   end
 
+  def measured?
+    [0, 1].include?(zero_el)
+  end
+
   def to_s
     left = zero_string
     return one_string if left.empty?
