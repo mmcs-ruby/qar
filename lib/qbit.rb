@@ -48,10 +48,10 @@ class Qbit
   # qubit contains now
   def measure
     if rand <= @vector[0, 0].abs2
-      @vector = [1, 0]
+      self.vector = [1, 0]
       0
     else
-      @vector = [0, 1]
+      self.vector = [0, 1]
       1
     end
   end
@@ -64,6 +64,10 @@ class Qbit
   # Returns one element
   def one_el
     @vector[1, 0].round(ACCURACY)
+  end
+
+  def measured?
+    (0..1).include?(zero_el)
   end
 
   # Returns true if entangled with another bit
