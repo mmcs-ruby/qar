@@ -81,11 +81,11 @@ class Qbit
 
   #Empty if zero probability is 0
   def zero_string
-    zero_el.zero? ? zero_el.to_s + ZERO_PROB : ''
+    zero_el.zero? ? '' : zero_el.to_s + ZERO_PROB
   end
 
   def one_string
-    one_el.zero? ? one_el.to_s + ONE_PROB : ''
+    one_el.zero? ? '' : one_el.to_s + ONE_PROB
   end
 
 end
