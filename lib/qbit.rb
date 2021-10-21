@@ -72,18 +72,22 @@ class Qbit
   end
 
   def to_s
+    left = zero_string
+    return one_string if left.empty?
 
-    zero = zero_el
-    one = one_el
-
-    str = ""
-
-    str << zero.to_s << ZERO_PROB unless zero.zero?
-    str << " + " unless zero.zero? || one.zero?
-    str << one.to_s << ONE_PROB unless one.zero?
-
-    str
+    right = one_string
+    right.empty? ? left : "#{left} + #{right}"
   end
+
+  #Empty if zero probability is 0
+  def zero_string
+    zero_el.zero? ? '' : zero_el.to_s + ZERO_PROB
+  end
+
+  def one_string
+    one_el.zero? ? '' : one_el.to_s + ONE_PROB
+  end
+
 end
 
 Qubit = Qbit

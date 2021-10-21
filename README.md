@@ -1,4 +1,7 @@
 [![Ruby](https://github.com/mmcs-ruby/qar/actions/workflows/main.yml/badge.svg)](https://github.com/mmcs-ruby/qar/actions/workflows/main.yml)
+[![Maintainability](https://api.codeclimate.com/v1/badges/d4b94e2d823470345913/maintainability)](https://codeclimate.com/github/mmcs-ruby/qar/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/d4b94e2d823470345913/test_coverage)](https://codeclimate.com/github/mmcs-ruby/qar/test_coverage)
+
 # Qar
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/qar`. To experiment with that code, run `bin/console` for an interactive prompt.
