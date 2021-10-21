@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require_relative "test_helper"
 
 class QarTest < Minitest::Test
   include QuantumException
@@ -62,19 +62,19 @@ class QarTest < Minitest::Test
 
   def test_qbit_to_s
     q = Qbit.new(1, 0)
-    assert q.to_s == "1|0>"
+    assert_equal "1|0>", q.to_s
   end
   
   def test_qbit_to_s_real
     q = Qbit.new(Math.sqrt(2) / 2, Math.sqrt(2) / 2)
 
-    assert q.to_s == "0.7071067812|0> + 0.7071067812|1>"
+    assert_equal "0.7071067812|0> + 0.7071067812|1>", q.to_s
   end
   
   def test_qbit_to_s_complex
     q = Qbit.new((1 + 1i) / 2, 1i / Math.sqrt(2))
 
-    assert q.to_s == "1/2+1/2i|0> + 0.0+0.7071067812i|1>"
+    assert_equal "1/2+1/2i|0> + 0.0+0.7071067812i|1>", q.to_s
   end
 
   def test_qbit_generator
