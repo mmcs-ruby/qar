@@ -14,4 +14,10 @@ module QuantumException
       super(msg)
     end
   end
+
+  class EmptyEntanglementException < StandardError
+    def initialize(msg = "An entanglement cannot be empty")
+      super(msg)
+    end
+  end
 end

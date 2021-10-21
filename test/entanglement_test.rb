@@ -108,6 +108,11 @@ class EntanglementTest < Minitest::Test
                           Qubit.new(0, 1))
     assert_equal "|101>", e.measure.to_s
 
+    sh = Math.sqrt(0.5)
+    e = Entanglement.new( Qubit.new(sh, sh),
+                          Qubit.new(sh, -sh))
+    assert_equal "0.5|00> + 0.5|01> + -0.5|10> + -0.5|11>", e.to_s
+
     # ...
   end
 
@@ -118,5 +123,13 @@ class EntanglementTest < Minitest::Test
   def test_something_is_connected_with_Bell_states
     # ...
   end
+
+  def test_entanglement_cannot_be_empty
+    assert_raises EmptyEntanglementException do
+      e = Entanglement.new
+    end
+  end
+
+
 
 end

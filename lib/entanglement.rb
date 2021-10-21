@@ -7,6 +7,7 @@ class Entanglement
   include QuantumException
 
   def initialize(*qubits)
+    raise EmptyEntanglementException if qubits.empty?
     @qubits = qubits
     @size = @qubits.size
     # number of variants
@@ -35,7 +36,7 @@ class Entanglement
       @measuring = i
       return self
     end
-    self
+    raise NormalizationException
   end
 
   def measured?
