@@ -90,10 +90,11 @@ class QbitTest < Minitest::Test
   end
 
   def test_qbit_is_measured_if_measured
-    q = Qbit.generate
-    assert_equal false, q.measured? unless [1, 0].include?(q.zero_el)
+    q = Qbit.new(Math.sqrt(0.5), Math.sqrt(0.5))
+    assert_equal false, q.measured?
     q.measure
     assert_equal true, q.measured?
   end
+
 end
 

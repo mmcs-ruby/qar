@@ -12,3 +12,5 @@ gem "minitest", "~> 5.0"
 gem "rubocop", "~> 1.7"
 
 gem 'simplecov', require: false, group: :test
+
+gem "rbs"

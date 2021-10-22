@@ -1,13 +1,13 @@
-class Qubit
+class Qbit
   attr_reader vector: Matrix
 
-  attr_accessor entanglement: bool
+  attr_reader entanglement: Array[Entanglement]
 
   include VectorHelper
 
-  def initialize: (Numeric zero_prob, Numeric one_prob) -> untyped
+  def initialize: (Numeric zero_prob, Numeric one_prob) -> Qbit
 
-  def vector=: (Array vector) -> untyped
+  def vector=: (Array[Numeric] vector) -> untyped
 
   def measure: () -> Integer
 

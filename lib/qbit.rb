@@ -10,7 +10,7 @@ ONE_PROB = "|1>".freeze
 # Qubit can be measured or multiplicative
 class Qbit
   attr_reader :vector
-  attr_accessor :entanglement
+  attr_reader :entanglement
 
   include VectorHelper
 
@@ -64,10 +64,6 @@ class Qbit
   # Returns one element
   def one_el
     @vector[1, 0].round(ACCURACY)
-  end
-
-  def measured?
-    (0..1).include?(zero_el)
   end
 
   # Returns true if entangled with another bit

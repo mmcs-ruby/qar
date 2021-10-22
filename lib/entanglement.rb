@@ -11,8 +11,7 @@ class Entanglement
     @qubits = qubits
     @size = @qubits.size
     # number of variants
-    @nov = 1
-    @nov <<= @size
+    @nov = 1 << @size
 
     @qubits.each do |q|
       check_entanglement_constraint(q)
@@ -44,29 +43,24 @@ class Entanglement
   end
 
   def to_s(digits = 3)
-    out = ""
     if measured?
-      out << "|"
-      out << @measuring.to_s(2).rjust(@size, "0")
-      out << ">"
+      out = "|#{@measuring.to_s(2).rjust(@size, "0")}>"
     else
+      out = ""
       (0...@nov).each do |i|
         probability_amplitude = 1
         (0...@size).each { |bit_index| probability_amplitude *= @qubits[bit_index].vector[i[bit_index], 0] }
         next if probability_amplitude.zero?
 
-        out << probability_amplitude.round(digits).to_s
-        out << "|"
-        out << i.to_s(2).rjust(@size, "0")
-        out << ">"
-        out << " + " unless i == @nov - 1
+        out << " + " unless out.empty?
+        out << "#{probability_amplitude.round(digits).to_s}|#{i.to_s(2).rjust(@size, "0")}>"
       end
     end
     out
   end
 
-  def push(object)
-    extend_entanglement_by(object, :right)
+  def push(qubit)
+    extend_entanglement_by(qubit, :right)
   end
 
   alias add push
@@ -91,17 +85,15 @@ class Entanglement
     when Entanglement
       object.qubits.each { |q| check_entanglement_constraint(q) }
 
-    else
-      raise ArgumentError
     end
     self
   end
 
   def bind_qubit_with_entanglement(qubit)
     if qubit.entanglement.nil?
-      qubit.entanglement = [self]
+      qubit.instance_variable_set(:@entanglement, [self])
     else
-      qubit.entanglement << self
+      qubit.instance_exec(self) { |this| @entanglement << this }
     end
     self
   end
@@ -114,11 +106,9 @@ class Entanglement
         @measuring += (object.one_el << @size - 1) if where == :left && !object.one_el.zero?
 
       when Entanglement
-        @measuring = (@measuring << object.size) + object.measuring if where == :right
-        @measuring += (object.one_el << @size - object.size) if where == :left && !object.measuring.zero?
+        @measuring = (@measuring << object.size) + object.instance_variable_get(:@measuring) if where == :right
+        @measuring += (object.one_el << @size - object.size) if where == :left && !object.instance_variable_get(:@measuring).zero?
 
-      else
-        raise ArgumentError
       end
     else
       # how can we improve this, optimize this?
@@ -143,8 +133,6 @@ class Entanglement
       @size += object.size
       @nov <<= object.size
 
-    else
-      raise ArgumentError
     end
     update_current_measuring(object, where)
     self

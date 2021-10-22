@@ -130,6 +130,56 @@ class EntanglementTest < Minitest::Test
     end
   end
 
+  def test_pushing_measured_qubit_right
+    (q = Qubit.generate).measure
+    e = Entanglement.new(Qubit.generate).measure
+    e.push(q)
+    assert_equal true, e.measured?
+  end
 
+  def test_pushing_measured_qubit_left
+    (q = Qubit.generate).measure
+    e = Entanglement.new(Qubit.generate).measure
+    e.unshift(q)
+    assert_equal true, e.measured?
+  end
 
+  def test_pushing_measured_entanglement_right
+    e1 = Entanglement.new(Qubit.generate).measure
+    e2 = Entanglement.new(Qubit.generate).measure
+    e1.push(e2)
+    assert_equal true, e1.measured?
+  end
+
+  def test_pushing_measured_entanglement_left
+    e1 = Entanglement.new(Qubit.generate).measure
+    e2 = Entanglement.new(Qubit.generate).measure
+    e1.unshift(e2)
+    assert_equal true, e1.measured?
+  end
+
+  def test_qbit_is_entanglement
+    q = Qubit.generate
+    assert_equal false, q.entangled?
+    e = Entanglement.new(q)
+    assert_equal true, q.entangled?
+  end
+
+  def test_qbit_is_also_entangled_if_locates_in_2_entanglements
+    q = Qubit.generate
+    e = Entanglement.new(q)
+    assert_equal true, q.entangled?
+    e2 = Entanglement.new(q)
+    assert_equal true, q.entangled?
+    assert_equal [e, e2], q.entanglement
+  end
+
+  def test_qbit_is_measured_if_its_entanglement_was_measured
+    q = Qubit.generate
+    e = Entanglement.new(q)
+    assert_equal false, q.measured?
+    e.measure
+    assert_equal true, e.measured?
+    assert_equal true, q.measured?
+  end
 end
