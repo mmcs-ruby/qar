@@ -2,6 +2,7 @@
 
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 require "qar"
+require 'simplecov'
 
 require "minitest/autorun"
 module Minitest
