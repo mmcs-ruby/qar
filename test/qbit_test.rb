@@ -96,5 +96,9 @@ class QbitTest < Minitest::Test
     assert_equal true, q.measured?
   end
 
+  def test_to_str
+    assert_equal "1|1>", "" + Qubit.new(0, 1)
+  end
+
 end
 

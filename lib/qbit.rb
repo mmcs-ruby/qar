@@ -47,6 +47,7 @@ class Qbit
   # use probabilities of one and zero to give the answer what
   # qubit contains now
   def measure
+    return (zero_el.zero? ? 1 : 0) if measured?
     if rand <= @vector[0, 0].abs2
       self.vector = [1, 0]
       0
@@ -90,6 +91,10 @@ class Qbit
 
   def one_string
     one_el.zero? ? '' : one_el.to_s + ONE_PROB
+  end
+
+  def to_str
+    to_s
   end
 
 end

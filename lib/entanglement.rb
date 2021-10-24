@@ -1,11 +1,16 @@
 require "qbit"
 require "vector_helper"
 
+# The +Entanglement+ class represents a combination of qubits' superpositions.
+# It contains an array of qubits.
+#
 class Entanglement
   attr_reader :qubits, :size, :nov
 
   include QuantumException
 
+  # Takes an array of qubits.
+  # Qubits must be normalized.
   def initialize(*qubits)
     raise EmptyEntanglementException if qubits.empty?
     @qubits = qubits
@@ -13,14 +18,17 @@ class Entanglement
     # number of variants
     @nov = 1 << @size
 
-    @qubits.each do |q|
-      check_entanglement_constraint(q)
-      bind_qubit_with_entanglement(q)
+    @qubits.each do |qubit|
+      check_entanglement_constraint(qubit)
+      bind_qubit_with_entanglement(qubit)
     end
     self
   end
 
-  def measure
+  # Measures the entanglement, result is stored as integer.
+  # Every bit of the integer represent a state of every entanglement's qubit.
+  def measure!
+    return self if measured?
     r = rand + 1e-10
 
     # a kind of a weak tensor product
@@ -38,10 +46,18 @@ class Entanglement
     raise NormalizationException
   end
 
+  # Returns a measured deep copy of this instance.
+  def measure
+    deep_dup.measure!
+  end
+
+  # Checks whether this instance was measured.
   def measured?
     !@measuring.nil?
   end
 
+  # Returns a string representation of this instance.
+  # Hides possibility amplitudes if they are zero.
   def to_s(digits = 3)
     if measured?
       out = "|#{@measuring.to_s(2).rjust(@size, "0")}>"
@@ -59,36 +75,53 @@ class Entanglement
     out
   end
 
-  def push(qubit)
-    extend_entanglement_by(qubit, :right)
+  # Adds a qubit to right side of sequence of qubits.
+  def push!(*qubits)
+    extend_entanglement_by(*qubits, :right)
+  end
+
+  # Returns the entanglement with qubits added to right side.
+  def push(*qubits)
+    deep_dup.send(:extend_entanglement_by, *qubits, :right)
   end
 
   alias add push
 
-  def unshift(qubit)
-    extend_entanglement_by(qubit, :left)
+  # Adds a qubit to left side of sequence of qubits.
+  def unshift!(*qubits)
+    extend_entanglement_by(*qubits, :left)
   end
 
-=begin
-  def *(other)
-    self
+  # Returns the entanglement with qubits added to left side.
+  def unshift(*qubits)
+    deep_dup.send(:extend_entanglement_by, *qubits, :left)
   end
-=end
+
+  # Same as push.
+  def *(qubit)
+    deep_dup.push(qubit)
+  end
+
+  # Returns deep copy of the entanglement.
+  def deep_dup
+    (tmp = dup).instance_variable_set(:@qubits, @qubits.map { |qubit| qubit.dup })
+    tmp
+  end
+
+  def to_str
+    to_s
+  end
 
   private
 
-  def check_entanglement_constraint(object)
-    case object
-    when Qubit
-      raise ReEntanglementException if !object.entanglement.nil? && object.entanglement.include?(self)
-
-    when Entanglement
-      object.qubits.each { |q| check_entanglement_constraint(q) }
-
-    end
+  # Checks entanglement requirement:
+  # a sum of | products of possibility amplitudes of different qubits |^2 must be equal 1.
+  def check_entanglement_constraint(*qubits)
+    qubits.each { |qubit| raise ReEntanglementException if qubit.entangled? && qubit.entanglement.include?(self) }
     self
   end
 
+  # Adds qubit reference to specified entanglement.
   def bind_qubit_with_entanglement(qubit)
     if qubit.entanglement.nil?
       qubit.instance_variable_set(:@entanglement, [self])
@@ -98,43 +131,30 @@ class Entanglement
     self
   end
 
-  def update_current_measuring(object, where)
-    if object.measured? && measured?
-      case object
-      when Qubit
-        @measuring = (@measuring << 1) + object.one_el if where == :right
-        @measuring += (object.one_el << @size - 1) if where == :left && !object.one_el.zero?
+  # Updates measuring parameter.
+  def update_current_measuring(*qubits, where)
+    if qubits.all? { |qubit| qubit.measured? } && measured?
 
-      when Entanglement
-        @measuring = (@measuring << object.size) + object.instance_variable_get(:@measuring) if where == :right
-        @measuring += (object.one_el << @size - object.size) if where == :left && !object.instance_variable_get(:@measuring).zero?
-
-      end
+      qubits_measuring = Entanglement.new(*qubits).measure!.instance_variable_get(:@measuring)
+      @measuring = (@measuring << qubits.size) + qubits_measuring if where == :right
+      @measuring += qubits_measuring if where == :left && !qubits_measuring.zero?
     else
-      # how can we improve this, optimize this?
       @measuring = nil
     end
     self
   end
 
-  def extend_entanglement_by(object, where)
-    check_entanglement_constraint(object)
-    case object
-    when Qubit
-      bind_qubit_with_entanglement(object)
-      @qubits << object if where == :right
-      @qubits.unshift(object) if where == :left
-      @size += 1
-      @nov <<= 1
+  # Combine some private methods for extending the entanglement with a specified side.
+  def extend_entanglement_by(*qubits, where)
+    check_entanglement_constraint(*qubits)
+    qubits.each { |qubit| bind_qubit_with_entanglement(qubit) }
 
-    when Entanglement
-      @qubits += object.qubits if where == :right
-      @qubits = object.qubits + @qubits if where == :left
-      @size += object.size
-      @nov <<= object.size
+    @qubits += qubits if where == :right
+    @qubits = qubits + @qubits if where == :left
+    @size += qubits.size
+    @nov <<= qubits.size
 
-    end
-    update_current_measuring(object, where)
+    update_current_measuring(*qubits, where)
     self
   end
 end

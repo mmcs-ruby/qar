@@ -27,7 +27,7 @@ class EntanglementTest < Minitest::Test
   def test_qubit_pushing_is_working_correctly
     e = Entanglement.new(Qubit.generate)
     q_right = Qubit.generate
-    e.push(q_right)
+    e.push!(q_right)
     assert_equal [e], q_right.entanglement
     assert_equal e.qubits[1], q_right
     assert_equal e.size, 2
@@ -37,18 +37,17 @@ class EntanglementTest < Minitest::Test
   def test_qubit_shifting_is_working_correctly
     e = Entanglement.new(Qubit.generate)
     q_left = Qubit.generate
-    e.unshift(q_left)
+    e.unshift!(q_left)
     assert_equal [e], q_left.entanglement
     assert_equal e.qubits[0], q_left
     assert_equal e.size, 2
     assert_equal e.nov, 1 << 2
   end
 
-  def test_entanglement_pushing_is_working_correctly
+  def test_qubits_pushing_is_working_correctly
     q1, q2, q3 = Qubit.generate, Qubit.generate, Qubit.generate
     e1 = Entanglement.new(q1)
-    e2 = Entanglement.new(q2, q3)
-    e1.push(e2)
+    e1.push!(q2, q3)
     assert_equal e1.qubits, [q1, q2, q3]
     assert_equal e1.size, 3
     assert_equal e1.nov, 1 << 3
@@ -57,8 +56,7 @@ class EntanglementTest < Minitest::Test
   def test_entanglement_shifting_is_working_correctly
     q1, q2, q3 = Qubit.generate, Qubit.generate, Qubit.generate
     e1 = Entanglement.new(q1)
-    e2 = Entanglement.new(q2, q3)
-    e1.unshift(e2)
+    e1.unshift!(q2, q3)
     assert_equal e1.qubits, [q2, q3, q1]
     assert_equal e1.size, 3
     assert_equal e1.nov, 1 << 3
@@ -86,14 +84,14 @@ class EntanglementTest < Minitest::Test
   def test_measuring_of_a_random_entanglement
     e = Entanglement.new(Qubit.generate, Qubit.generate, Qubit.generate)
     assert_nothing_raised NotImplementedError do
-      e.measure
+      e.measure!
     end
   end
 
   def test_measured_is_working_right
     e = Entanglement.new(Qubit.generate, Qubit.generate, Qubit.generate)
     assert_equal false, e.measured?
-    e.measure
+    e.measure!
     assert_equal true, e.measured?
   end
 
@@ -101,12 +99,12 @@ class EntanglementTest < Minitest::Test
     e = Entanglement.new( Qubit.new(1, 0),
                           Qubit.new(1, 0),
                           Qubit.new(1, 0))
-    assert_equal "|000>", e.measure.to_s
+    assert_equal "|000>", e.measure!.to_s
 
     e = Entanglement.new( Qubit.new(0, 1),
                           Qubit.new(1, 0),
                           Qubit.new(0, 1))
-    assert_equal "|101>", e.measure.to_s
+    assert_equal "|101>", e.measure!.to_s
 
     sh = Math.sqrt(0.5)
     e = Entanglement.new( Qubit.new(sh, sh),
@@ -132,29 +130,29 @@ class EntanglementTest < Minitest::Test
 
   def test_pushing_measured_qubit_right
     (q = Qubit.generate).measure
-    e = Entanglement.new(Qubit.generate).measure
-    e.push(q)
+    e = Entanglement.new(Qubit.generate).measure!
+    e.push!(q)
     assert_equal true, e.measured?
   end
 
   def test_pushing_measured_qubit_left
     (q = Qubit.generate).measure
-    e = Entanglement.new(Qubit.generate).measure
-    e.unshift(q)
+    e = Entanglement.new(Qubit.generate).measure!
+    e.unshift!(q)
     assert_equal true, e.measured?
   end
 
-  def test_pushing_measured_entanglement_right
-    e1 = Entanglement.new(Qubit.generate).measure
-    e2 = Entanglement.new(Qubit.generate).measure
-    e1.push(e2)
+  def test_pushing_measured_qubits_right
+    e1 = Entanglement.new(Qubit.generate).measure!
+    q = [Qubit.new(1, 0), Qubit.new(1, 0), Qubit.new(0, 1)]
+    e1.push!(*q)
     assert_equal true, e1.measured?
   end
 
   def test_pushing_measured_entanglement_left
-    e1 = Entanglement.new(Qubit.generate).measure
-    e2 = Entanglement.new(Qubit.generate).measure
-    e1.unshift(e2)
+    e1 = Entanglement.new(Qubit.generate).measure!
+    q = [Qubit.new(1, 0), Qubit.new(1, 0), Qubit.new(0, 1)]
+    e1.unshift!(*q)
     assert_equal true, e1.measured?
   end
 
@@ -178,8 +176,45 @@ class EntanglementTest < Minitest::Test
     q = Qubit.generate
     e = Entanglement.new(q)
     assert_equal false, q.measured?
-    e.measure
+    e.measure!
     assert_equal true, e.measured?
     assert_equal true, q.measured?
+  end
+
+  def test_measuring_with_side_effect_free
+    e = Entanglement.new(Qubit.generate)
+    assert_equal false, e.measured?
+    e2 = e.measure
+    assert_equal false, e.measured?
+    assert_equal true, e2.measured?
+  end
+
+  def test_pushing_with_side_effect_free
+    e = Entanglement.new(Qubit.generate)
+    assert e.size == 1
+    e2 = e.push(Qubit.generate)
+    assert e.size == 1
+    assert e2.size == 2
+  end
+
+  def test_unshift_with_side_effect_free
+    e = Entanglement.new(Qubit.generate)
+    assert e.size == 1
+    e2 = e.unshift(Qubit.generate)
+    assert e.size == 1
+    assert e2.size == 2
+  end
+
+  def test_entanglement_multiple_qubit
+    q1, q2 = Qubit.generate, Qubit.generate
+    e = Entanglement.new(q1)
+    assert e.size == 1
+    e2 = e * q2
+    assert e.size == 1
+    assert e2.size == 2
+  end
+
+  def test_to_str
+    assert_equal "1|1>", "" + Entanglement.new(Qubit.new(0, 1))
   end
 end
