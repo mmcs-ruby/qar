@@ -7,15 +7,25 @@ class Qbit
 
   def initialize: (Numeric zero_prob, Numeric one_prob) -> Qbit
 
+  def self.generate: () -> Qbit
+
   def vector=: (Array[Numeric] vector) -> untyped
 
   def measure: () -> Integer
 
-  def zero_probability: () -> Numeric
+  def zero_el: () -> Numeric
 
-  def one_probability: () -> Numeric
+  def one_el: () -> Numeric
 
   def entangled?: () -> bool
 
+  def measured?: () -> bool
+
   def to_s: () -> (nil | String)
+
+  def zero_string: () -> String
+
+  def one_string: () -> String
+
+  def to_str: () -> (nil | String)
 end
