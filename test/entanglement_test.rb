@@ -13,7 +13,7 @@ class EntanglementTest < Minitest::Test
   def test_attributes_counting_is_right
     e = Entanglement.new(Qubit.generate, Qubit.generate, Qubit.generate)
     assert_equal 3, e.size
-    assert_equal 1 << 3, e.nov
+    assert_equal 1 << 3, e.number_of_variants
   end
 
   def test_qubits_refer_to_correct_entanglement
@@ -31,7 +31,7 @@ class EntanglementTest < Minitest::Test
     assert_equal [e], q_right.entanglement
     assert_equal e.qubits[1], q_right
     assert_equal e.size, 2
-    assert_equal e.nov, 1 << 2
+    assert_equal e.number_of_variants, 1 << 2
   end
 
   def test_qubit_shifting_is_working_correctly
@@ -41,7 +41,7 @@ class EntanglementTest < Minitest::Test
     assert_equal [e], q_left.entanglement
     assert_equal e.qubits[0], q_left
     assert_equal e.size, 2
-    assert_equal e.nov, 1 << 2
+    assert_equal e.number_of_variants, 1 << 2
   end
 
   def test_qubits_pushing_is_working_correctly
@@ -50,7 +50,7 @@ class EntanglementTest < Minitest::Test
     e1.push!(q2, q3)
     assert_equal e1.qubits, [q1, q2, q3]
     assert_equal e1.size, 3
-    assert_equal e1.nov, 1 << 3
+    assert_equal e1.number_of_variants, 1 << 3
   end
 
   def test_entanglement_shifting_is_working_correctly
@@ -59,7 +59,7 @@ class EntanglementTest < Minitest::Test
     e1.unshift!(q2, q3)
     assert_equal e1.qubits, [q2, q3, q1]
     assert_equal e1.size, 3
-    assert_equal e1.nov, 1 << 3
+    assert_equal e1.number_of_variants, 1 << 3
   end
 
   def test_check_measuring_after_adding

@@ -5,7 +5,7 @@ require "vector_helper"
 # It contains an array of qubits.
 #
 class Entanglement
-  attr_reader :qubits, :size, :nov
+  attr_reader :qubits, :size, :number_of_variants
 
   include QuantumException
 
@@ -16,7 +16,7 @@ class Entanglement
     @qubits = qubits
     @size = @qubits.size
     # number of variants
-    @nov = 1 << @size
+    @number_of_variants = 1 << @size
 
     @qubits.each do |qubit|
       check_entanglement_constraint(qubit)
@@ -33,7 +33,7 @@ class Entanglement
 
     # a kind of a weak tensor product
     generally_probability = 0
-    (0...@nov).each do |i|
+    (0...@number_of_variants).each do |i|
       probability_amplitude = 1
       (0...@size).each { |bit_index| probability_amplitude *= @qubits[bit_index].vector[i[bit_index], 0] }
       generally_probability += probability_amplitude.abs2
@@ -63,7 +63,7 @@ class Entanglement
       out = "|#{@measuring.to_s(2).rjust(@size, "0")}>"
     else
       out = ""
-      (0...@nov).each do |i|
+      (0...@number_of_variants).each do |i|
         probability_amplitude = 1
         (0...@size).each { |bit_index| probability_amplitude *= @qubits[bit_index].vector[i[bit_index], 0] }
         next if probability_amplitude.zero?
@@ -152,7 +152,7 @@ class Entanglement
     @qubits += qubits if where == :right
     @qubits = qubits + @qubits if where == :left
     @size += qubits.size
-    @nov <<= qubits.size
+    @number_of_variants <<= qubits.size
 
     update_current_measuring(*qubits, where)
     self
