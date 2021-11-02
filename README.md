@@ -26,7 +26,39 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Qbit
+
+To create a qubit with given probability amplitudes:
+
+    q0 = Qbit.new(1, 0)  # |0>
+    q1 = Qbit.new(0, 1)  # |1>
+    
+with random probability amplitudes:
+
+    q = Qbit.generate 
+        # a|0> + b|1>
+
+To measure:
+
+    q.measure
+
+### Entanglement
+
+Entanglements are the result of gates, but you can create them manually as well:
+
+    e = Entanglement(q0, q1, Qbit.generate) # a|010> + b|011>
+
+Also you can add some qubits to a specific entanglement:
+
+    e.push!(Qbit.new(Math.sqrt(0.5), Math.sqrt(0.5))) 
+        # 1/√2(a|0100> + b|0110> + a|0101> + b|0111>)
+
+    e2 = e.unshift(q0)
+        # 1/√2(a|00100> + b|00110> + a|00101> + b|00111>)
+
+To measure:
+
+    e.measure!
 
 ## Development
 
