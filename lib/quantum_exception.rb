@@ -8,4 +8,16 @@ module QuantumException
       super(msg)
     end
   end
+
+  class ReEntanglementException < StandardError
+    def initialize(msg = "Qubit cannot be entangled twice in the same entanglement")
+      super(msg)
+    end
+  end
+
+  class EmptyEntanglementException < StandardError
+    def initialize(msg = "An entanglement cannot be empty")
+      super(msg)
+    end
+  end
 end

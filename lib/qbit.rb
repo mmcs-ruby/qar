@@ -10,7 +10,7 @@ ONE_PROB = "|1>".freeze
 # Qubit can be measured or multiplicative
 class Qbit
   attr_reader :vector
-  attr_accessor :entanglement
+  attr_reader :entanglement
 
   include VectorHelper
 
@@ -18,6 +18,7 @@ class Qbit
   # Probabilities should be normalized: |a|^2 + |b|^2 = 1
   def initialize(zero_prob, one_prob)
     self.vector = [zero_prob, one_prob]
+    @entanglement = nil
   end
 
   def self.generate
@@ -47,12 +48,11 @@ class Qbit
   # use probabilities of one and zero to give the answer what
   # qubit contains now
   def measure
+    return (zero_el.zero? ? 1 : 0) if measured?
     if rand <= @vector[0, 0].abs2
-      @vector = [1, 0]
-      0
+      set_zero
     else
-      @vector = [0, 1]
-      1
+      set_one
     end
   end
 
@@ -68,7 +68,11 @@ class Qbit
 
   # Returns true if entangled with another bit
   def entangled?
-    @entanglement
+    !@entanglement.nil?
+  end
+
+  def measured?
+    [0, 1].include?(zero_el)
   end
 
   def to_s
@@ -88,4 +92,25 @@ class Qbit
     one_el.zero? ? '' : one_el.to_s + ONE_PROB
   end
 
+  def to_str
+    to_s
+  end
+
+  def set_zero
+    self.vector = [1, 0]
+    0
+  end
+
+  def set_one
+    self.vector = [0, 1]
+    1
+  end
+
+  def set_value(value)
+    set_zero if value == 0
+    set_one if value == 1
+  end
+
 end
+
+Qubit = Qbit
