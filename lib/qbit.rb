@@ -18,6 +18,7 @@ class Qbit
   # Probabilities should be normalized: |a|^2 + |b|^2 = 1
   def initialize(zero_prob, one_prob)
     self.vector = [zero_prob, one_prob]
+    @entanglement = nil
   end
 
   def self.generate
@@ -49,11 +50,9 @@ class Qbit
   def measure
     return (zero_el.zero? ? 1 : 0) if measured?
     if rand <= @vector[0, 0].abs2
-      self.vector = [1, 0]
-      0
+      set_zero
     else
-      self.vector = [0, 1]
-      1
+      set_one
     end
   end
 
@@ -95,6 +94,21 @@ class Qbit
 
   def to_str
     to_s
+  end
+
+  def set_zero
+    self.vector = [1, 0]
+    0
+  end
+
+  def set_one
+    self.vector = [0, 1]
+    1
+  end
+
+  def set_value(value)
+    set_zero if value == 0
+    set_one if value == 1
   end
 
 end

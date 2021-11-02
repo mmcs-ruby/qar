@@ -165,7 +165,7 @@ class EntanglementTest < Minitest::Test
 
   def test_entanglement_cannot_be_empty
     assert_raises EmptyEntanglementException do
-      e = Entanglement.new
+      Entanglement.new
     end
   end
 
@@ -199,7 +199,7 @@ class EntanglementTest < Minitest::Test
 
   def test_qbit_is_entangled
     q = Qubit.generate
-    e = Entanglement.new(q)
+    Entanglement.new(q)
     assert_equal true, q.entangled?
   end
 

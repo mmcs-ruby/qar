@@ -80,7 +80,7 @@ class QbitTest < Minitest::Test
   def test_qbit_generator
     srand(Time.now.to_i)
     assert_nothing_raised do
-      q = Qbit.generate
+      Qbit.generate
     end
   end
 

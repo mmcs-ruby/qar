@@ -5,7 +5,7 @@ require "vector_helper"
 # It contains an array of qubits.
 #
 class Entanglement
-  attr_reader :qubits, :size, :number_of_variants
+  attr_reader :qubits, :size, :number_of_variants, :measuring
 
   include QuantumException
 
@@ -17,6 +17,7 @@ class Entanglement
     @size = @qubits.size
     # number of variants
     @number_of_variants = 1 << @size
+    @measuring = nil
 
     @qubits.each do |qubit|
       check_entanglement_constraint(qubit)
@@ -32,14 +33,14 @@ class Entanglement
     r = rand + 1e-10
 
     # a kind of a weak tensor product
-    generally_probability = 0
+    general_probability = 0
     (0...@number_of_variants).each do |i|
       probability_amplitude = 1
-      (0...@size).each { |bit_index| probability_amplitude *= @qubits[bit_index].vector[i[bit_index], 0] }
-      generally_probability += probability_amplitude.abs2
-      next if generally_probability < r
+      (0...@size).each { |bit_index| probability_amplitude *= probability_amplitude(i, bit_index) }
+      general_probability += probability_amplitude.abs2
+      next if general_probability < r
 
-      (0...@size).each { |bit_index| @qubits[bit_index].vector = (i[bit_index].zero? ? [1, 0] : [0, 1]) }
+      @qubits.each_with_index { |q, bit_index| q.set_value(i[bit_index]) }
       @measuring = i
       return self
     end
@@ -59,18 +60,16 @@ class Entanglement
   # Returns a string representation of this instance.
   # Hides possibility amplitudes if they are zero.
   def to_s(digits = 3)
-    if measured?
-      out = "|#{@measuring.to_s(2).rjust(@size, "0")}>"
-    else
-      out = ""
-      (0...@number_of_variants).each do |i|
-        probability_amplitude = 1
-        (0...@size).each { |bit_index| probability_amplitude *= @qubits[bit_index].vector[i[bit_index], 0] }
-        next if probability_amplitude.zero?
+    return rjust_ket_vector(@measuring) if measured?
 
-        out << " + " unless out.empty?
-        out << "#{probability_amplitude.round(digits).to_s}|#{i.to_s(2).rjust(@size, "0")}>"
-      end
+    out = ""
+    (0...@number_of_variants).each do |i|
+      qubit_probability_amplitude = 1
+      (0...@size).each { |bit_index| qubit_probability_amplitude *= probability_amplitude(i, bit_index) }
+      next if qubit_probability_amplitude.zero?
+
+      out << " + " unless out.empty?
+      out << "#{qubit_probability_amplitude.round(digits).to_s}" + rjust_ket_vector(i)
     end
     out
   end
@@ -114,6 +113,14 @@ class Entanglement
 
   private
 
+  def rjust_ket_vector(i)
+    "|#{i.to_s(2).rjust(@size, "0")}>"
+  end
+
+  def probability_amplitude(i, bit_index)
+    @qubits[bit_index].vector[i[bit_index], 0]
+  end
+
   # Checks entanglement requirement:
   # a sum of | products of possibility amplitudes of different qubits |^2 must be equal 1.
   def check_entanglement_constraint(*qubits)
@@ -135,7 +142,7 @@ class Entanglement
   def update_current_measuring(*qubits, where)
     if qubits.all? { |qubit| qubit.measured? } && measured?
 
-      qubits_measuring = Entanglement.new(*qubits).measure!.instance_variable_get(:@measuring)
+      qubits_measuring = Entanglement.new(*qubits).measure!.measuring
       @measuring = (@measuring << qubits.size) + qubits_measuring if where == :right
       @measuring += qubits_measuring if where == :left && !qubits_measuring.zero?
     else
