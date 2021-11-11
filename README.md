@@ -1,4 +1,7 @@
 [![Ruby](https://github.com/mmcs-ruby/qar/actions/workflows/main.yml/badge.svg)](https://github.com/mmcs-ruby/qar/actions/workflows/main.yml)
+[![Maintainability](https://api.codeclimate.com/v1/badges/d4b94e2d823470345913/maintainability)](https://codeclimate.com/github/mmcs-ruby/qar/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/d4b94e2d823470345913/test_coverage)](https://codeclimate.com/github/mmcs-ruby/qar/test_coverage)
+
 # Qar
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/qar`. To experiment with that code, run `bin/console` for an interactive prompt.
@@ -23,7 +26,39 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Qbit
+
+To create a qubit with given probability amplitudes:
+
+    q0 = Qbit.new(1, 0)  # |0>
+    q1 = Qbit.new(0, 1)  # |1>
+    
+with random probability amplitudes:
+
+    q = Qbit.generate 
+        # a|0> + b|1>
+
+To measure:
+
+    q.measure
+
+### Entanglement
+
+Entanglements are the result of gates, but you can create them manually as well:
+
+    e = Entanglement(q0, q1, Qbit.generate) # a|010> + b|011>
+
+Also you can add some qubits to a specific entanglement:
+
+    e.push!(Qbit.new(Math.sqrt(0.5), Math.sqrt(0.5))) 
+        # 1/√2(a|0100> + b|0110> + a|0101> + b|0111>)
+
+    e2 = e.unshift(q0)
+        # 1/√2(a|00100> + b|00110> + a|00101> + b|00111>)
+
+To measure:
+
+    e.measure!
 
 ## Development
 

@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 require_relative '../lib/qar/extensions/extensions'
-require "test_helper"
+require_relative "test_helper"
+require_relative "qbit_test"
+require_relative "entanglement_test"
 
 class QarTest < Minitest::Test
-  def test_that_it_has_a_version_number
-    refute_nil ::Qar::VERSION
-  end
 
   def test_it_does_something_useful
     # test that we are not a teapot... just 4 fun

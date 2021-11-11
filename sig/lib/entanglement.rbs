@@ -1,0 +1,43 @@
+class Entanglement
+  attr_reader qubits: Array[Qubit]
+
+  attr_reader size: Integer
+
+  attr_reader nov: Integer
+
+  include QuantumException
+
+  def initialize: (*Qubit qubits) -> Entanglement
+
+  def measure!: () -> Entanglement
+
+  def measure: () -> Entanglement
+
+  def measured?: () -> bool
+
+  def to_s: (?::Integer digits) -> String
+
+  def push!: (*Qubit qubits) -> Entanglement
+
+  def push: (*Qubit qubits) -> Entanglement
+
+  def unshift!: (*Qubit qubits) -> Entanglement
+
+  def unshift: (*Qubit qubits) -> Entanglement
+
+  def *: (Qubit qubit) -> Entanglement
+
+  def deep_dup: () -> Entanglement
+
+  def to_str: () -> String
+
+  private
+
+  def check_entanglement_constraint: (*Qubit qubits) -> Entanglement
+
+  def bind_qubit_with_entanglement: (Qubit qubit) -> Entanglement
+
+  def update_current_measuring: (*Qubit qubits, Symbol where) -> Entanglement
+
+  def extend_entanglement_by: (*Qubit qubits, Symbol where) -> Entanglement
+end

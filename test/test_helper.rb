@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
+require 'simplecov'
+SimpleCov.start
+
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
-require "qar"
+require_relative "qar"
 require 'simplecov'
 
 require "minitest/autorun"

@@ -1,4 +1,8 @@
+# frozen_string_literal: true
 require "matrix"
+
+# Extensions of existing Ruby classes
+
 # Complex class round extension
 class Complex
   def round(digits)
