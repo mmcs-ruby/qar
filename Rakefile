@@ -13,4 +13,7 @@ end
 
 # RuboCop::RakeTask.new
 
+require 'simplecov'
+SimpleCov.start
+
 task default: %i[test]
