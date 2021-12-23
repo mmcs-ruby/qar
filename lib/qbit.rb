@@ -44,6 +44,10 @@ class Qbit
     raise NormalizationException unless normalized?
   end
 
+  def nil_entanglement()
+    @entanglement = nil
+  end
+
   # Measurement give information about current qubit that is
   # use probabilities of one and zero to give the answer what
   # qubit contains now

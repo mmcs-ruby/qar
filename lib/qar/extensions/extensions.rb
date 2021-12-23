@@ -10,13 +10,6 @@ class Complex
   end
 end
 
-# Integer class round extension
-class Integer
-  def round(num)
-    num
-  end
-end
-
 # Matrix class product and print extensions
 class Matrix
   class << self

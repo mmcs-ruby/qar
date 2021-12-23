@@ -20,4 +20,10 @@ module QuantumException
       super(msg)
     end
   end
+
+  class GateArgumentException < StandardError
+    def initialize(msg = "Quantum gates arguments are incorrect")
+      super(msg)
+    end
+  end
 end
